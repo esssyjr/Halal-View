@@ -1,22 +1,32 @@
 {
   "manifest_version": 3,
-  "name": "Hala View",
+  "name": "Underdressed Detector",
   "version": "1.0",
-  "description": "Blurs explicit images in the browser.",
-  "permissions": ["activeTab", "scripting", "storage"],
-  "host_permissions": ["<all_urls>"],
+  "description": "Detect clothing using TensorFlow.js in browser images.",
+  "permissions": [
+    "activeTab",        // Required to access the currently active tab
+    "scripting",         // Allows scripts to run in the context of web pages
+    "storage"            // Required if you want to store data locally
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content-script.js"],
-      "run_at": "document_idle"
+      "js": ["content-script.js"]
     }
-  ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": "icon.png"
-  }
+  ]
 }
