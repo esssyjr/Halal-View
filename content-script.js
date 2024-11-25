@@ -1,24 +1,42 @@
-// Load TensorFlow.js model
+// Content script to analyze images and blur explicit ones
+
+// URL of the TensorFlow.js model located in the extension folder
 const modelUrl = chrome.runtime.getURL("tfjs_model/model.json");
+
 let model;
 
+// Load the model using TensorFlow.js
 async function loadModel() {
-    model = await tf.loadGraphModel(modelUrl);
-    console.log("Model loaded!");
+    try {
+        model = await tf.loadGraphModel(modelUrl);
+        console.log("Model loaded successfully!");
+        processImages();  // Process images once the model is loaded
+    } catch (error) {
+        console.error("Error loading the model:", error);
+    }
 }
 
+// Analyze and blur explicit images
 async function analyzeAndBlurImage(img) {
-    // Convert image to tensor
     const imgTensor = tf.browser.fromPixels(img).expandDims(0).toFloat().div(255);
     const prediction = await model.predict(imgTensor).data();
 
-    if (prediction[0] > 0.8) { // Assuming the model outputs a "probability of explicit"
+    if (prediction[0] > 0.8) {  // Threshold for explicit content (adjust as needed)
         img.style.filter = "blur(10px)";
     }
 }
 
-document.querySelectorAll("img").forEach((img) => {
-    analyzeAndBlurImage(img);
-});
+// Process all images on the page
+function processImages() {
+    const images = document.querySelectorAll("img");
+    images.forEach((img) => {
+        img.onload = () => analyzeAndBlurImage(img);  // Analyze image when it's loaded
+    });
+}
 
+// Observer to monitor dynamically added images (e.g., lazy-loaded images)
+const observer = new MutationObserver(() => processImages());
+observer.observe(document.body, { childList: true, subtree: true });
+
+// Load the model and start processing images
 loadModel();
