@@ -21,7 +21,7 @@ async function analyzeAndBlurImage(img) {
     const imgTensor = tf.browser.fromPixels(img).expandDims(0).toFloat().div(255);
     const prediction = await model.predict(imgTensor).data();
 
-    if (prediction[0] > 0.8) {  // Threshold for explicit content (adjust as needed)
+    if (prediction[0] > 0.4) {  // Threshold for explicit content (adjust as needed)
         img.style.filter = "blur(10px)";
     }
 }
