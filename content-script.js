@@ -1,7 +1,8 @@
 // Content script to analyze images and blur explicit ones
 
 // URL of the TensorFlow.js model located in the extension folder
-const modelUrl = chrome.runtime.getURL("tfjs_model/model.json");
+const modelUrl = "http://127.0.0.1:8080/tfjs_model/model.json";
+
 
 let model;
 
